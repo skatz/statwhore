@@ -1,0 +1,1 @@
+require 'statwhore/google/analytics'
