@@ -8,4 +8,7 @@ require 'rubygems'
 require 'hpricot'
 require 'active_support'
 
+gem 'googlebase', '>= 0.2.0'
+require 'google/base'
+
 require 'statwhore/google'

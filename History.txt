@@ -1,4 +1,2 @@
-== 0.0.1 2007-10-08
-
-* 1 major enhancement:
-  * Initial release
+* 0.0.2 - switched to googlebase for google auth and requests
+* 0.0.1 - initial relase

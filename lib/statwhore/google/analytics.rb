@@ -1,4 +1,3 @@
-require 'statwhore/google/analytics/base'
 require 'statwhore/google/analytics/account'
 require 'statwhore/google/analytics/profile'
 

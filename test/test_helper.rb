@@ -10,4 +10,4 @@ class << Test::Unit::TestCase
 end
 
 CONFIG = YAML::load(open("#{ENV['HOME']}/.statwhore"))
-Statwhore::Google::Analytics::Base.establish_connection(CONFIG[:username], CONFIG[:password])
+Google::Base.establish_connection(CONFIG[:username], CONFIG[:password])

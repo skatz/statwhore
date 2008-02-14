@@ -1,15 +1,13 @@
 module Statwhore
   module Google
     module Analytics      
-      class Account < Base
-        class << self
-          def find_all
-            doc = parse(request('/analytics/home/'))
-            (doc/'select[@name=account_list] option').inject([]) do |accounts, option|
-              account_id = option['value'].to_i
-              accounts << new(:account_id => account_id, :name => option.inner_html) if account_id > 0
-              accounts
-            end
+      class Account < ::Google::Base
+        def self.find_all
+          doc = Hpricot::XML(get('https://www.google.com:443/analytics/home/'))
+          (doc/'select[@name=account_list] option').inject([]) do |accounts, option|
+            account_id = option['value'].to_i
+            accounts << new(:account_id => account_id, :name => option.inner_html) if account_id > 0
+            accounts
           end
         end
         

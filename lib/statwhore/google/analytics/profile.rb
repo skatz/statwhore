@@ -1,20 +1,18 @@
 module Statwhore
   module Google
     module Analytics      
-      class Profile < Base
-        class << self
-          def find_all(account_id)
-            doc = parse(request("/analytics/home/admin?scid=#{account_id}"))
-            (doc/'select[@name=profile_list] option').inject([]) do |profiles, option|
-              profile_id = option['value'].to_i
-              profiles << Profile.new(:account_id => account_id, :profile_id => profile_id, :name => option.inner_html) if profile_id > 0
-              profiles
-            end
+      class Profile < ::Google::Base
+        def self.find_all(account_id)
+          doc = Hpricot::XML(get("https://www.google.com:443/analytics/home/admin?scid=#{account_id}"))
+          (doc/'select[@name=profile_list] option').inject([]) do |profiles, option|
+            profile_id = option['value'].to_i
+            profiles << Profile.new(:account_id => account_id, :profile_id => profile_id, :name => option.inner_html) if profile_id > 0
+            profiles
           end
-          
-          def find(account_id, profile_id)
-            find_all(account_id).select { |p| p.profile_id.to_s == profile_id.to_s }.first
-          end
+        end
+        
+        def self.find(account_id, profile_id)
+          find_all(account_id).select { |p| p.profile_id.to_s == profile_id.to_s }.first
         end
         
         attr_accessor :account_id, :name, :profile_id
