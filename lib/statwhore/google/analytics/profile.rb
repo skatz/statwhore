@@ -12,7 +12,7 @@ module Statwhore
         end
         
         def self.find(account_id, profile_id)
-          find_all(account_id).select { |p| p.profile_id.to_s == profile_id.to_s }.first
+          find_all(account_id).detect { |p| p.profile_id.to_s == profile_id.to_s }
         end
         
         attr_accessor :account_id, :name, :profile_id
@@ -24,50 +24,45 @@ module Statwhore
           @profile_id = attrs[:profile_id]  if attrs.has_key?(:profile_id)
         end
         
-        def summaries(options={})
-          doc = Hpricot.XML(get_report(options))
-          (doc/:ItemSummary).inject([]) do |sums, is|
-            sums << OpenStruct.new(
-              :id    => is['id'], 
-              :name  => is.at('Message').inner_html, 
-              :value => is.at('SummaryValue').inner_html
-            ) 
-            sums
-          end
-        end
-        
-        # start/stop: Ymd format
-        def get_report(options={})
+        def report(options={})
           options.reverse_merge!({
-            :report      => 'DashboardReport',
-            :format      => FORMAT_XML,
-            :start       => Time.now.utc - 7.days,
-            :stop        => Time.now.utc,
-            :filter      => nil,
-            :filter_mode => FILTER_MATCH,
-            :sort_column => 2,
-            :sort_order  => SORT_DESC
+            :report  => 'Dashboard',
+            :from    => Time.now.utc - 7.days,
+            :to      => Time.now.utc,
+            :tab     => 0,
+            :format  => FORMAT_XML,
+            :compute => 'average',
+            :view    => 0
           })
-          
-          options[:start] = ensure_datetime_in_google_format(options[:start])
-          options[:stop]  = ensure_datetime_in_google_format(options[:stop])
+          options[:from] = ensure_datetime_in_google_format(options[:from])
+          options[:to]   = ensure_datetime_in_google_format(options[:to])
           
           params = {
-            'id'  => profile_id,
-            'rpt' => options[:report],
-            'fmt' => options[:format],
-            'pdr' => "#{options[:start]}-#{options[:stop]}",
-            'cmp' => 'average',
-            'fd' => options[:filter],
-            'ft' => options[:filter_mode],
-            'sf' => options[:sort_column],
-            'sb' => options[:sort_order]
+            :pdr  => "#{options[:from]}-#{options[:to]}",
+            :rpt  => "#{options[:report]}Report",
+            :cmp  => options[:compute],
+            :fmt  => options[:format],
+            :view => options[:view],
+            :tab  => options[:tab],
+            :id   => profile_id,
           }
-          
-          qs = params.inject('') { |str, h| str << "#{h[0]}=#{h[1]}&" }
-          self.class.request("/analytics/reporting/export?#{qs}")
+          self.class.get("https://google.com/analytics/reporting/export", :query_hash => params)
         end
-
+        
+        def pageviews(options={})
+          response = report(options.merge({:report => 'Dashboard'}))
+          doc = Hpricot::XML(response)
+          pageviews = (doc/:ItemSummary).detect { |summary| summary.at('Message').inner_html == 'Pageviews' }
+          pageviews && pageviews.at('SummaryValue') ? pageviews.at('SummaryValue').inner_html.gsub(/\D/, '').to_i : 0
+        end
+        
+        def visits(options={})
+          response = report(options.merge({:report => 'Dashboard'}))
+          doc = Hpricot::XML(response)
+          pageviews = (doc/:ItemSummary).detect { |summary| summary.at('Message').inner_html == 'Visits' }
+          pageviews && pageviews.at('SummaryValue') ? pageviews.at('SummaryValue').inner_html.gsub(/\D/, '').to_i : 0
+        end
+        
         # takes a Date, Time or String
         def ensure_datetime_in_google_format(time)
           time.is_a?(Time) || time.is_a?(Date) ? time.strftime('%Y%m%d') : time

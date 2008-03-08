@@ -11,4 +11,5 @@ require 'active_support'
 gem 'googlebase', '>= 0.2.0'
 require 'google/base'
 
-require 'statwhore/google'
+require File.dirname(__FILE__) + '/statwhore/google'
+require File.dirname(__FILE__) + '/statwhore/connection'
