@@ -5,6 +5,7 @@ README.txt
 Rakefile
 config/hoe.rb
 config/requirements.rb
+examples/profiles.rb
 lib/statwhore.rb
 lib/statwhore/connection.rb
 lib/statwhore/google.rb
