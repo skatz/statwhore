@@ -50,17 +50,19 @@ module Statwhore
         end
         
         def pageviews(options={})
-          response = report(options.merge({:report => 'Dashboard'}))
-          doc = Hpricot::XML(response)
-          pageviews = (doc/:ItemSummary).detect { |summary| summary.at('Message').inner_html == 'Pageviews' }
-          pageviews && pageviews.at('SummaryValue') ? pageviews.at('SummaryValue').inner_html.gsub(/\D/, '').to_i : 0
+          get_item_summary_by_message(options.merge(:message => 'pageviews'))
+        end
+        
+        def pageviews_by_day(options={})
+          get_serie_by_label(options.merge({:label => 'pageviews'}))
         end
         
         def visits(options={})
-          response = report(options.merge({:report => 'Dashboard'}))
-          doc = Hpricot::XML(response)
-          pageviews = (doc/:ItemSummary).detect { |summary| summary.at('Message').inner_html == 'Visits' }
-          pageviews && pageviews.at('SummaryValue') ? pageviews.at('SummaryValue').inner_html.gsub(/\D/, '').to_i : 0
+          get_item_summary_by_message(options.merge(:message => 'visits'))
+        end
+        
+        def visits_by_day(options={})
+          get_serie_by_label(options.merge({:label => 'visits'}))
         end
         
         # takes a Date, Time or String
@@ -71,6 +73,29 @@ module Statwhore
         def to_s
           "#{name} (#{profile_id})"
         end
+        
+        private
+          def get_item_summary_by_message(options={})
+            raise ArgumentError unless options.has_key?(:message)
+            message = options.delete(:message).to_s.capitalize
+            response = report(options.merge({:report => 'Dashboard'}))
+            doc = Hpricot::XML(response)
+            pageviews = (doc/:ItemSummary).detect { |summary| summary.at('Message').inner_html == message }
+            pageviews && pageviews.at('SummaryValue') ? pageviews.at('SummaryValue').inner_html.gsub(/\D/, '').to_i : 0
+          end
+          
+          def get_serie_by_label(options={})
+            raise ArgumentError unless options.has_key?(:label)
+            label = options.delete(:label).to_s.capitalize
+            response = report(options.merge({:report => 'Dashboard'}))
+            doc = Hpricot::XML(response)
+            serie = (doc/:Serie).detect { |serie| serie.at('Label').inner_html == label }
+            if serie
+              (serie/:Point).inject([]) { |collection, point| collection << [Date.parse(point.at('Label').inner_html), point.at('Value').inner_html.to_i] }
+            else
+              []
+            end
+          end
       end
     end
   end

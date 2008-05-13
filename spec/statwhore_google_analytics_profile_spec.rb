@@ -35,11 +35,31 @@ describe "Statwhore::Google::Analytics::Profile" do
     profile.pageviews.should == 283
   end
   
+  it "should be able to get pageviews by day" do
+    profile = Statwhore::Google::Analytics::Profile.new(:account_id => 344381, :profile_id => 543890)
+    xml = open(File.dirname(__FILE__) + '/fixtures/dashboard_report_webgroup.xml').read
+    Statwhore::Google::Analytics::Profile.should_receive(:get).and_return(xml)
+    dates = profile.pageviews_by_day
+    dates.first.should == [Date.civil(2008, 2, 8), 72]
+    dates.last.should == [Date.civil(2008, 3, 9), 0]
+    dates.size.should == 31
+  end
+  
   it "should be able to get visits" do
     profile = Statwhore::Google::Analytics::Profile.new(:account_id => 344381, :profile_id => 543890)
     xml = open(File.dirname(__FILE__) + '/fixtures/dashboard_report_webgroup.xml').read
     Statwhore::Google::Analytics::Profile.should_receive(:get).and_return(xml)
     profile.visits.should == 228
+  end
+  
+  it "should be able to get visits by day" do
+    profile = Statwhore::Google::Analytics::Profile.new(:account_id => 344381, :profile_id => 543890)
+    xml = open(File.dirname(__FILE__) + '/fixtures/dashboard_report_webgroup.xml').read
+    Statwhore::Google::Analytics::Profile.should_receive(:get).and_return(xml)
+    dates = profile.visits_by_day
+    dates.first.should == [Date.civil(2008, 2, 8), 67]
+    dates.last.should == [Date.civil(2008, 3, 9), 0]
+    dates.size.should == 31
   end
   
 end
