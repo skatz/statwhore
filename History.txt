@@ -1,4 +1,4 @@
-* 0.0.6 - July 30, 2008
+* 0.0.5 - July 30, 2008
 				- Updated Account and Profile to work with google's html changes
 				
 * 0.0.4 - Added new #pageviews_by_day and #visits_by_day methods which return collection of days and values
