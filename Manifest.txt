@@ -1,10 +1,13 @@
 History.txt
 License.txt
 Manifest.txt
+PostInstall.txt
 README.txt
 Rakefile
 config/hoe.rb
 config/requirements.rb
+examples/account.rb
+examples/profile.rb
 examples/profiles.rb
 lib/statwhore.rb
 lib/statwhore/connection.rb
@@ -14,7 +17,7 @@ lib/statwhore/google/analytics/account.rb
 lib/statwhore/google/analytics/profile.rb
 lib/statwhore/google/feedburner.rb
 lib/statwhore/version.rb
-log/debug.log
+script/console
 script/destroy
 script/generate
 script/txt2html
