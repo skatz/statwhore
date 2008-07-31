@@ -1,4 +1,7 @@
+* 0.0.6 - July 30, 2008
+				- Updated Account and Profile to work with google's html changes
+				
 * 0.0.4 - Added new #pageviews_by_day and #visits_by_day methods which return collection of days and values
 * 0.0.3	- updated to new google api and switched to rspec
 * 0.0.2 - switched to googlebase for google auth and requests
-* 0.0.1 - initial relase
+* 0.0.1 - initial release

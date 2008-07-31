@@ -1,8 +1,8 @@
 require 'statwhore/version'
 
-AUTHOR = 'FIXME full name'  # can also be an array of Authors
-EMAIL = "FIXME email"
-DESCRIPTION = "description of gem"
+AUTHOR = 'John Nunemaker'  # can also be an array of Authors
+EMAIL = "nunemaker@gmail.com"
+DESCRIPTION = "for the stat addict in us all"
 GEM_NAME = 'statwhore' # what ppl will type to install your gem
 RUBYFORGE_PROJECT = 'statwhore' # The unix name for your project
 HOMEPATH = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
@@ -60,8 +60,6 @@ hoe = Hoe.new(GEM_NAME, VERS) do |p|
   # == Optional
   p.changes = p.paragraphs_of("History.txt", 0..1).join("\\n\\n")
   p.extra_deps = [ ['googlebase', '>= 0.2.0'], ['activesupport', '>= 2.0.2'], ['hpricot', '>= 0.6'] ]
-  #p.extra_deps = []     # An array of rubygem dependencies [name, version], e.g. [ ['active_support', '>= 1.3.1'] ]
-  
   #p.spec_extras = {}    # A hash of extra values to set in the gemspec.
   
 end
